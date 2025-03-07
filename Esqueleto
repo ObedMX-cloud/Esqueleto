@@ -1,0 +1,336 @@
+import tkinter as tk
+from tkinter import font, messagebox, ttk, simpledialog
+
+class FormularioMaestroDesign(tk.Tk):
+
+    def __init__(self):
+        super().__init__()
+        self.config_window()
+        self.paneles()
+        self.controles_barra_superior()        
+        self.controles_menu_lateral()
+        self.controles_cuerpo()
+        self.tareas = []
+        self.deudas = []
+    
+    def config_window(self):
+        # Configuración inicial de la ventana
+        self.title('Gestión de Tareas y Deudas')
+        w, h = 1024, 600        
+        self.geometry(f"{w}x{h}")
+        self.resizable(False, False)
+
+    def paneles(self):        
+        # Crear paneles: barra superior, menú lateral y cuerpo principal
+        self.barra_superior = tk.Frame(self, bg="#2A2A2A", height=50)
+        self.barra_superior.pack(side=tk.TOP, fill='both')      
+
+        self.menu_lateral = tk.Frame(self, bg="#1E1E1E", width=150)
+        self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False) 
+        
+        self.cuerpo_principal = tk.Frame(self, bg="#FFFFFF")
+        self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
+    
+    def controles_barra_superior(self):
+        # Configuración de la barra superior
+        font_awesome = font.Font(family='FontAwesome', size=12)
+        # Etiqueta de título
+        self.labelTitulo = tk.Label(self.barra_superior, text="Gestión de Tareas y Deudas")
+        self.labelTitulo.config(fg="#fff", font=("Roboto", 15), bg="#2A2A2A", pady=10, width=16)
+        self.labelTitulo.pack(side=tk.LEFT)
+
+        # Botón del menú lateral
+        self.buttonMenuLateral = tk.Button(self.barra_superior, text="\uf0c9", font=font_awesome,
+                                           command=self.toggle_panel, bd=0, bg="#2A2A2A", fg="white")
+        self.buttonMenuLateral.pack(side=tk.LEFT)
+
+        # Etiqueta de informacion
+        self.labelTitulo = tk.Label(self.barra_superior, text="info@example.com")
+        self.labelTitulo.config(fg="#fff", font=("Roboto", 10), bg="#2A2A2A", padx=10, width=20)
+        self.labelTitulo.pack(side=tk.RIGHT)
+    
+    def controles_menu_lateral(self):
+        # Configuración del menú lateral
+        ancho_menu = 20
+        alto_menu = 2
+        font_awesome = font.Font(family='FontAwesome', size=15)
+         
+        # Botones del menú lateral
+        self.buttonDashBoard = tk.Button(self.menu_lateral, command=self.mostrar_dashboard)        
+        self.buttonProfile = tk.Button(self.menu_lateral, command=self.mostrar_perfil)        
+        self.buttonPicture = tk.Button(self.menu_lateral, command=self.mostrar_imagen)
+        self.buttonInfo = tk.Button(self.menu_lateral, command=self.mostrar_info)        
+        self.buttonSettings = tk.Button(self.menu_lateral, command=self.mostrar_configuracion)
+        self.buttonDeudas = tk.Button(self.menu_lateral, command=self.mostrar_deudas)  # Nuevo botón para deudas
+
+        buttons_info = [
+            ("Dashboard", "\uf109", self.buttonDashBoard),
+            ("Profile", "\uf007", self.buttonProfile),
+            ("Picture", "\uf03e", self.buttonPicture),
+            ("Info", "\uf129", self.buttonInfo),
+            ("Settings", "\uf013", self.buttonSettings),
+            ("Deudas", "\uf155", self.buttonDeudas)  # Agregar el botón de deudas
+        ]
+
+        for text, icon, button in buttons_info:
+            self.configurar_boton_menu(button, text, icon, font_awesome, ancho_menu, alto_menu)                    
+    
+    def controles_cuerpo(self):
+        # Etiqueta en el cuerpo principal
+        self.label = tk.Label(self.cuerpo_principal, text="Bienvenido", font=("Arial", 24), bg="#FFFFFF")
+        self.label.place(x=0, y=0, relwidth=1, relheight=1)
+
+    def configurar_boton_menu(self, button, text, icon, font_awesome, ancho_menu, alto_menu):
+        button.config(text=f"  {icon}    {text}", anchor="w", font=font_awesome,
+                      bd=0, bg="#1E1E1E", fg="white", width=ancho_menu, height=alto_menu)
+        button.pack(side=tk.TOP)
+        self.bind_hover_events(button)
+
+    def bind_hover_events(self, button):
+        # Asociar eventos Enter y Leave con la función dinámica
+        button.bind("<Enter>", lambda event: self.on_enter(event, button))
+        button.bind("<Leave>", lambda event: self.on_leave(event, button))
+
+    def on_enter(self, event, button):
+        # Cambiar estilo al pasar el ratón por encima
+        button.config(bg="#3A3A3A", fg='white')
+
+    def on_leave(self, event, button):
+        # Restaurar estilo al salir el ratón
+        button.config(bg="#1E1E1E", fg='white')
+
+    def toggle_panel(self):
+        # Alternar visibilidad del menú lateral
+        if self.menu_lateral.winfo_ismapped():
+            self.menu_lateral.pack_forget()
+        else:
+            self.menu_lateral.pack(side=tk.LEFT, fill='y')
+
+    def mostrar_dashboard(self):
+        self.limpiar_cuerpo()
+        self.label.pack_forget()
+        self.crear_interfaz_tareas()
+
+    def mostrar_perfil(self):
+        self.limpiar_cuerpo()
+        self.label.pack_forget()
+        tk.Label(self.cuerpo_principal, text="Perfil del Usuario", font=("Arial", 18), bg="#FFFFFF").pack(pady=20)
+
+    def mostrar_imagen(self):
+        self.limpiar_cuerpo()
+        self.label.pack_forget()
+        tk.Label(self.cuerpo_principal, text="Imágenes", font=("Arial", 18), bg="#FFFFFF").pack(pady=20)
+
+    def mostrar_info(self):
+        self.limpiar_cuerpo()
+        self.label.pack_forget()
+        tk.Label(self.cuerpo_principal, text="Información", font=("Arial", 18), bg="#FFFFFF").pack(pady=20)
+
+    def mostrar_configuracion(self):
+        self.limpiar_cuerpo()
+        self.label.pack_forget()
+        tk.Label(self.cuerpo_principal, text="Configuración", font=("Arial", 18), bg="#FFFFFF").pack(pady=20)
+
+    def mostrar_deudas(self):
+        self.limpiar_cuerpo()
+        self.label.pack_forget()
+        self.crear_interfaz_deudas()  # Llamar a la función para mostrar la interfaz de deudas
+
+    def limpiar_cuerpo(self):
+        for widget in self.cuerpo_principal.winfo_children():
+            widget.destroy()
+
+    def crear_interfaz_tareas(self):
+        frame = tk.Frame(self.cuerpo_principal, bg="#FFFFFF")
+        frame.pack(pady=10)
+
+        entrada = ttk.Entry(frame, width=40, font=("Arial", 12))
+        entrada.grid(row=0, column=0, padx=5, pady=5)
+
+        btn_agregar = ttk.Button(frame, text="Agregar", command=lambda: self.agregar_tarea(entrada))
+        btn_agregar.grid(row=0, column=1, padx=5)
+
+        frame_lista = tk.Frame(self.cuerpo_principal, bg="#FFFFFF")
+        frame_lista.pack()
+
+        scrollbar = tk.Scrollbar(frame_lista)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.lista_tareas = tk.Listbox(frame_lista, width=50, height=15, font=("Arial", 12), yscrollcommand=scrollbar.set)
+        self.lista_tareas.pack(padx=10, pady=5)
+        scrollbar.config(command=self.lista_tareas.yview)
+
+        self.lista_tareas.bind("<Double-Button-1>", self.completar_tarea)
+
+        btn_completar = ttk.Button(self.cuerpo_principal, text="Marcar como Completada", command=self.completar_tarea)
+        btn_completar.pack(pady=5)
+
+        btn_editar = ttk.Button(self.cuerpo_principal, text="Editar Tarea", command=self.editar_tarea)
+        btn_editar.pack(pady=5)
+
+        btn_eliminar = ttk.Button(self.cuerpo_principal, text="Eliminar Tarea", command=self.eliminar_tarea)
+        btn_eliminar.pack(pady=5)
+
+        self.actualizar_lista()
+
+    def agregar_tarea(self, entrada):
+        titulo = entrada.get().strip()
+        if titulo:
+            self.tareas.append({"titulo": titulo, "estado": "Pendiente"})
+            self.actualizar_lista()
+            entrada.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Aviso", "Debes ingresar una tarea.")
+
+    def eliminar_tarea(self):
+        try:
+            index = self.lista_tareas.curselection()[0]
+            tarea = self.tareas[index]
+            respuesta = messagebox.askyesno("Confirmación", f"¿Seguro que quieres eliminar '{tarea['titulo']}'?")
+            if respuesta:
+                del self.tareas[index]
+                self.actualizar_lista()
+        except IndexError:
+            messagebox.showwarning("Aviso", "Selecciona una tarea para eliminar.")
+
+    def completar_tarea(self, event=None):
+        try:
+            index = self.lista_tareas.curselection()[0]
+            tarea = self.tareas[index]
+            tarea["estado"] = "Completada" if tarea["estado"] == "Pendiente" else "Pendiente"
+            self.actualizar_lista()
+        except IndexError:
+            messagebox.showwarning("Aviso", "Selecciona una tarea para marcar como completada.")
+
+    def editar_tarea(self):
+        try:
+            index = self.lista_tareas.curselection()[0]
+            tarea = self.tareas[index]
+
+            nueva_tarea = simpledialog.askstring("Editar tarea", "Modifica la tarea:", initialvalue=tarea["titulo"])
+            if nueva_tarea:
+                tarea["titulo"] = nueva_tarea.strip()
+                self.actualizar_lista()
+        except IndexError:
+            messagebox.showwarning("Aviso", "Selecciona una tarea para editar.")
+
+    def actualizar_lista(self):
+        self.lista_tareas.delete(0, tk.END)
+        for tarea in self.tareas:
+            estado_texto = "✅" if tarea["estado"] == "Completada" else "❌"
+            self.lista_tareas.insert(tk.END, f"{estado_texto} {tarea['titulo']}")
+
+    def crear_interfaz_deudas(self):
+        frame_top = tk.Frame(self.cuerpo_principal, bg="#D3D3D3", height=50)
+        frame_top.pack(fill="x")
+        
+        tk.Label(frame_top, text="Gestión de Deudas", font=("Arial", 18, "bold"), bg="#AEC6CF", fg="white").pack(pady=10)
+        
+        frame_form = tk.Frame(self.cuerpo_principal, bg="#AEC6CF", padx=20, pady=20)
+        frame_form.pack(fill="x", padx=20, pady=10)
+        
+        self.crear_formulario(frame_form)
+        
+        frame_table = tk.Frame(self.cuerpo_principal, bg="#AEC6CF")
+        frame_table.pack(expand=True, fill="both", padx=20, pady=10)
+        
+        self.crear_tabla(frame_table)
+
+    def crear_formulario(self, frame):
+        labels = ["Acreedor:", "Monto:", "Fecha Vencimiento:", "Interés (%)"]
+        self.entries = {}
+        
+        for idx, label in enumerate(labels):
+            tk.Label(frame, text=label, font=("Arial", 12), bg="#AEC6CF").grid(row=idx, column=0, sticky="w", pady=5)
+            entry = ttk.Entry(frame, font=("Arial", 12))
+            entry.grid(row=idx, column=1, padx=10, pady=5)
+            self.entries[label] = entry
+        
+        ttk.Button(frame, text="Agregar Deuda", command=self.guardar_adeudo).grid(row=len(labels), columnspan=2, pady=10)
+    
+    def crear_tabla(self, frame):
+        columnas = ("Acreedor", "Monto", "Vencimiento", "Interés")
+        self.tree = ttk.Treeview(frame, columns=columnas, show="headings")
+        
+        for col in columnas:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=150)
+        
+        self.tree.pack(expand=True, fill="both")
+        
+        btn_frame = tk.Frame(frame, bg="#ffffff")
+        btn_frame.pack(fill="x")
+        
+        ttk.Button(btn_frame, text="Eliminar", command=self.eliminar_adeudo).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Modificar", command=self.modificar_adeudo).pack(side="left", padx=5)
+
+    def guardar_adeudo(self):
+        acreedor = self.entries["Acreedor:"].get()
+        monto = self.entries["Monto:"].get()
+        vencimiento = self.entries["Fecha Vencimiento:"].get()
+        interes = self.entries["Interés (%)"].get()
+        
+        if not acreedor or not monto.isdigit():
+            messagebox.showwarning("Error", "Ingrese un acreedor y un monto válido.")
+            return
+        
+        nueva_deuda = {
+            "acreedor": acreedor,
+            "monto": int(monto),
+            "vencimiento": vencimiento or "No especificado",
+            "interes": interes or "0%"
+        }
+        
+        self.deudas.append(nueva_deuda)
+        self.actualizar_tabla()
+        messagebox.showinfo("Éxito", "Deuda agregada correctamente.")
+    
+    def actualizar_tabla(self):
+        self.tree.delete(*self.tree.get_children())
+        
+        if not isinstance(self.deudas, list):
+            self.deudas = []
+        
+        for deuda in self.deudas:
+            if isinstance(deuda, dict):
+                self.tree.insert("", "end", values=(deuda.get("acreedor", ""), deuda.get("monto", 0), deuda.get("vencimiento", ""), deuda.get("interes", "")))
+
+    def eliminar_adeudo(self):
+        """Elimina la deuda seleccionada."""
+        selected_item = self.tree.selection()
+        if not selected_item:
+            messagebox.showwarning("Error", "Seleccione una deuda para eliminar.")
+            return
+        
+        values = self.tree.item(selected_item, "values")
+        self.deudas = [d for d in self.deudas if d["acreedor"] != values[0] or str(d["monto"]) != values[1]]
+        self.actualizar_tabla()
+        messagebox.showinfo("Éxito", "Deuda eliminada correctamente.")
+    
+    def modificar_adeudo(self):
+        """Modifica una deuda existente."""
+        selected_item = self.tree.selection()
+        if not selected_item:
+            messagebox.showwarning("Error", "Seleccione una deuda para modificar.")
+            return
+        
+        values = self.tree.item(selected_item, "values")
+        for deuda in self.deudas:
+            if deuda["acreedor"] == values[0] and str(deuda["monto"]) == values[1]:
+                self.entries["Acreedor:"].delete(0, tk.END)
+                self.entries["Monto:"].delete(0, tk.END)
+                self.entries["Fecha Vencimiento:"].delete(0, tk.END)
+                self.entries["Interés (%)"].delete(0, tk.END)
+                
+                self.entries["Acreedor:"].insert(0, deuda["acreedor"])
+                self.entries["Monto:"].insert(0, deuda["monto"])
+                self.entries["Fecha Vencimiento:"].insert(0, deuda["vencimiento"])
+                self.entries["Interés (%)"].insert(0, deuda["interes"])
+                
+                self.deudas.remove(deuda)
+                break
+
+if __name__ == "__main__":
+    app = FormularioMaestroDesign()
+    app.mainloop()
+    
